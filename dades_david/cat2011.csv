@@ -1,11 +1,4 @@
-﻿Coneixement de català. Per nivells de coneixement. Comarques, àmbits i províncies
-2011
-Unitats: Persones.
-Font: Idescat. Cens de població 2011.
-(..) Dada confidencial, amb baixa fiabilitat o no disponible.
-Institut d'Estadística de Catalunya
-https://www.idescat.cat/indicadors/?id=aec&n=15778
-;L'entén;El sap parlar;El sap llegir;El sap escriure;No l'entén;Població de 2 anys i més
+﻿;L'entén;El sap parlar;El sap llegir;El sap escriure;No l'entén;Població de 2 anys i més
 Alt Camp;42677;36667;37514;28027;971;43648
 Alt Empordà;127128;97018;103691;74454;8014;135142
 Alt Penedès;98905;83190;85661;64215;3012;101916
@@ -60,4 +53,3 @@ Barcelona;5097395;3852980;4184851;2926178;267892;5365286
 Girona;694660;562826;587975;443144;35701;730362
 Lleida;408077;339773;350685;258675;17331;425408
 Tarragona;749212;589905;626837;441220;35805;785016
-
