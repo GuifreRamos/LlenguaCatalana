@@ -1,10 +1,10 @@
+import geopandas as gpd
 import pandas as pd
 import matplotlib.pyplot as plt
-
-import tkinter
-root = tkinter.Tk()
-print(root.tk.exprstring('$tcl_library'))
-print(root.tk.exprstring('$tk_library'))
+import plotly.express as px
+import numpy as np
+from PIL import Image
+import io
 
 
 def filter_df_by_column_value(df, columns, value):
@@ -59,6 +59,7 @@ print("\nDescriptive Statistics:")
 print(df.describe())
 
 df_2015 = filter_df_by_column_value(df, ["any"], 2020)
+print(df_2015.head())
 df_2015_estudis_baixos = filter_df_by_column_value(df_2015,['concepte'], 'població amb estudis baixos (%)')
 
 print(df_2015_estudis_baixos)
@@ -66,3 +67,113 @@ print(df_2015_estudis_baixos)
 plt.bar(df_2015_estudis_baixos['comarca o Aran'], df_2015_estudis_baixos['valor'])
 plt.xticks(rotation='vertical')
 plt.show()
+
+data_dir = "dades_david/"
+comarques = gpd.read_file(data_dir + "comarq.geojson")
+
+print(comarques.columns)
+
+
+df_2015_estudis_baixos = df_2015_estudis_baixos.rename(columns={"comarca o Aran": "nom_comar"})
+print("Here are the heads ...")
+print(df_2015_estudis_baixos.columns)
+print(comarques.columns)
+
+comarques_new = pd.merge(comarques, df_2015_estudis_baixos)
+print(comarques_new.columns)
+
+
+columns_to_keep = ['nom_comar', 'valor', 'geometry']
+comarques_new = comarques_new[columns_to_keep]
+print(comarques_new.columns)
+df_catalan_knowledge = df_2015_estudis_baixos.rename(columns={'valor': "percentage low studies"})
+comarques_new.plot(column='valor', legend=True)
+plt.show()
+
+df_catalan_knowledge = pd.read_csv(data_dir + "cat2011.csv", delimiter=';')
+df_catalan_knowledge = df_catalan_knowledge.rename(columns={'Unnamed: 0': "nom_comar"})
+comarques_new = pd.merge(comarques_new, df_catalan_knowledge)
+columns_to_keep = ['nom_comar', 'valor', '% sap parlar', 'geometry']
+comarques_new = comarques_new[columns_to_keep]
+print(comarques_new.columns)
+
+
+gdf = comarques_new
+
+gdf['% sap parlar'] = gdf['% sap parlar'].apply(lambda x: x.replace(',', '.'))
+gdf['% sap parlar'] = pd.to_numeric(gdf['% sap parlar'], errors='coerce')
+# Normalize the two variables to scale 0-1 for bivariate mapping
+gdf['valor_norm'] = (gdf['valor'] - gdf['valor'].min()) / (gdf['valor'].max() - gdf['valor'].min())
+gdf['parlar_norm'] = (gdf['% sap parlar'] - gdf['% sap parlar'].min()) / (gdf['% sap parlar'].max() - gdf['% sap parlar'].min())
+
+
+# Create a grid of colors (2D colormap) for the bivariate map
+# Example: Combining two gradients (one for each variable)
+def bivariate_color(val, parlar):
+    """Create a bivariate color using a linear interpolation of two normalized variables."""
+    r = int(val * 255)  # Red channel based on `valor`
+    g = int(parlar * 255)  # Green channel based on `% sap parlar`
+    b = 0
+    return f"rgb({r},{g},{b})"
+
+
+# Apply the bivariate color function
+gdf['bivariate_color'] = gdf.apply(lambda row: bivariate_color(row['valor_norm'], row['parlar_norm']), axis=1)
+
+# Convert GeoDataFrame to GeoJSON
+gdf_json = gdf.__geo_interface__
+
+# Create a choropleth map with Plotly using the bivariate color mapping
+fig = px.choropleth_mapbox(
+    gdf,
+    geojson=gdf_json,
+    locations=gdf.index,  # Match on index
+    color='bivariate_color',  # Custom bivariate color mapping
+    mapbox_style="carto-positron",
+    center={"lat": 41.3851, "lon": 2.1734},  # Adjust center (example: Barcelona)
+    zoom=8,
+    title="Bivariate Choropleth Map"
+)
+
+# Remove the default color scale
+fig.update_traces(marker=dict(opacity=1))
+
+# Create a bivariate legend using matplotlib
+figsize = 3
+x = np.linspace(0, 1, 100)
+y = np.linspace(0, 1, 100)
+x, y = np.meshgrid(x, y)
+colors = np.zeros((100, 100, 3))
+colors[..., 0] = x  # Red increases with valor
+colors[..., 1] = y  # Green increases with parlar
+colors[..., 2] = 0  # Blue is not used
+
+fig_legend, ax = plt.subplots(figsize=(figsize, figsize))
+ax.imshow(colors, origin="lower", extent=[0, 1, 0, 1])
+ax.set_xlabel("Valor (Red)", fontsize=10)
+ax.set_ylabel("% Sap Parlar (Green)", fontsize=10)
+ax.set_title("Bivariate Legend", fontsize=12)
+plt.tight_layout()
+
+# Save the legend as an image in memory
+buf = io.BytesIO()
+plt.savefig(buf, format='png', dpi=150, bbox_inches='tight', transparent=True)
+buf.seek(0)
+plt.close(fig_legend)
+
+# Overlay the legend as an image in Plotly
+image = Image.open(buf)
+fig.add_layout_image(
+    dict(
+        source=image,
+        xref="paper", yref="paper",
+        x=1.02, y=0.5,  # Adjust position (to the right of the map)
+        sizex=0.3, sizey=0.3,  # Adjust size
+        xanchor="left", yanchor="middle",
+        layer="above"
+    )
+)
+
+# Show the map with the legend
+fig.show()
+fig.write_html("bivariate_choropleth_map.html")
