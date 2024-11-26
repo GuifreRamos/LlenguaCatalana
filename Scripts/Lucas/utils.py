@@ -1,6 +1,16 @@
 import pandas as pd
 import numpy as np
 
+
+def rescale_principal_components(df, cols):
+    for col in cols:
+        df[col] = df[col] - df[col].min()
+        print(df[col])
+        max_val = df[col].max()
+        df[f"{col}_prct"] = 100 * df[col] / max_val
+        print(df[f"{col}_prct"])
+    return df
+
 def select_and_rename_columns(df, cols_dict):
     df = df[cols_dict.keys()]
     df = df.rename(columns=cols_dict)
@@ -12,8 +22,9 @@ def make_cols_numeric(df, cols):
     All the while supposing that the column's values are
     of the form '1,5' for example."""
     for col in cols:
-        df[col] = df[col].apply(lambda x: x.replace(',', '.'))
-        df[col] = pd.to_numeric(df[col], errors='coerce')
+        if pd.api.types.is_string_dtype(df[col].dtype):
+            df[col] = df[col].apply(lambda x: x.replace(',', '.'))
+            df[col] = pd.to_numeric(df[col], errors='coerce')
     return df
 
 def rescale_percentages(df, cols):
