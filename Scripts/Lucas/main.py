@@ -245,7 +245,7 @@ def third_intent():
     print(df)
     create_bivariate_plot_matplotlib(df, 'PC_Educational_prct', 'PC_Catalan_prct',
                                      file_name="EduvsCat_2011", x_axis_name="Educational Level",
-                                     y_axis_name="Catalan Level", title="Education vs Catalan Level")
+                                     y_axis_name="Catalan Level", title="Education vs Catalan Level 2011")
 
 
 def fourth_intent():
@@ -401,7 +401,7 @@ def fifth_intent():
     print(df)
     create_bivariate_plot_matplotlib(df, 'PC_Educational_prct', 'PC_Catalan_prct',
                                      file_name="EduvsCat_2001", x_axis_name="Educational Level",
-                                     y_axis_name="Catalan Level", title="Education vs Catalan Level")
+                                     y_axis_name="Catalan Level", title="Education vs Catalan Level 2001")
 
 
 def final_piece():
@@ -568,7 +568,7 @@ def final_piece():
     print(df)
     create_bivariate_plot_matplotlib_final(fig3, df, 'PC_Educational_prct', 'PC_Catalan_prct',
                                      file_name="EduvsCat_2001", x_axis_name="Educational Level",
-                                     y_axis_name="Catalan Level", title="Education vs Catalan Level")
+                                     y_axis_name="Catalan Level", title="Education vs Catalan Level 2001")
 
     data_dir = f"{os.path.dirname(__file__)}/../../Dades/Lucas/"
 
@@ -724,10 +724,11 @@ def final_piece():
     print(df)
     create_bivariate_plot_matplotlib_final(fig4, df, 'PC_Educational_prct', 'PC_Catalan_prct',
                                      file_name="EduvsCat_2011", x_axis_name="Educational Level",
-                                     y_axis_name="Catalan Level", title="Education vs Catalan Level")
+                                     y_axis_name="Catalan Level", title="Education vs Catalan Level 2011")
 
     saving_dir = f"{os.path.dirname(__file__)}/../../Figures/Lucas/"
 
     plt.savefig(f"{saving_dir}FinalPiece.jpg", bbox_inches='tight')
 
-final_piece()
+fifth_intent()
+third_intent()

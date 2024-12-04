@@ -162,7 +162,7 @@ def create_bivariate_plot_matplotlib(df, col1, col2, file_name, x_axis_name, y_a
 
     ### plot map based on bivariate choropleth
     fig, ax = plt.subplots(1, 1, figsize=(8, 10))
-    ax.title(title)
+    plt.title(title)
 
     df['color_bivariate'] = [get_bivariate_choropleth_color(p1, p2) for p1, p2 in
                               zip(df[col1].values, df[col2].values)]
