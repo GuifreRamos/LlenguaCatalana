@@ -317,7 +317,7 @@ def final_piece():
 
     data_dir = f"{os.path.dirname(__file__)}/../../Dades/Lucas/"
     # Load population data
-    df = pd.read_csv(data_dir + "t15743200100.csv", delimiter=';')
+    df = pd.read_csv(data_dir + "nivell_formacio_assolit_2001.csv", delimiter=';')
     print(df.columns)
     # Make Columns Numeric
     cols_list = [
@@ -473,7 +473,7 @@ def final_piece():
 
     data_dir = f"{os.path.dirname(__file__)}/../../Dades/Lucas/"
     # Load population data
-    df = pd.read_csv(data_dir + "nivell_formacio_assolit.csv", delimiter=';')
+    df = pd.read_csv(data_dir + "nivell_formacio_assolit_2011.csv", delimiter=';')
     # Make Columns Numeric
     cols_list = [
         "Total", "No sap llegir o escriure", "Sense estudis", "Educació primària",
