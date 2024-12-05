@@ -278,18 +278,14 @@ make_eduvcat_plot(2001)
 
 def final_piece():
     fig = plt.figure(constrained_layout=True, figsize=(10, 10))
-    subplots = fig.subfigures(2, 2)
+    subplots = fig.subfigures(1, 2)
 
-    fig1 = subplots[0][0]
-    fig2 = subplots[0][1]
-    fig3 = subplots[1][0]
-    fig4 = subplots[1][1]
+    fig1 = subplots[0]
+    fig2 = subplots[1]
 
     # Add the four Plots
     make_popvtalk_plot(2001, final=True, fig=fig1)
     make_popvtalk_plot(2011, final=True, fig=fig2)
-    make_eduvcat_plot(2001, final=True, fig=fig3)
-    make_eduvcat_plot(2011, final=True, fig=fig4)
 
     # Save the Plot
     saving_dir = f"{os.path.dirname(__file__)}/../../Figures/Lucas/"
