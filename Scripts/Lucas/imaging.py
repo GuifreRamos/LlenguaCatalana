@@ -7,9 +7,10 @@ from generativepy.color import Color
 from PIL import ImageColor
 import os
 
+
 def create_bivariate_plot_matplotlib_final(fig, df, col1, col2, file_name, x_axis_name, y_axis_name, title):
     ### percentile bounds defining upper boundaries of color classes
-    percentile_bounds = [i*20+ 0.01 for i in range(1, 6)]
+    percentile_bounds = [i * 20 + 0.01 for i in range(1, 6)]
 
     ### function to convert hex color to rgb to Color object (generativepy package)
     def hex_to_Color(hexcode):
@@ -45,7 +46,6 @@ def create_bivariate_plot_matplotlib_final(fig, df, col1, col2, file_name, x_axi
     ### function to get bivariate color given two percentiles
     def get_bivariate_choropleth_color(p1, p2):
         color = [0.8, 0.8, 0.8, 1]
-        print(p1, p2)
         if p1 >= 0 and p2 >= 0:
             count = 0
             stop = False
@@ -63,8 +63,7 @@ def create_bivariate_plot_matplotlib_final(fig, df, col1, col2, file_name, x_axi
     ax.title.set_text(title)
 
     df['color_bivariate'] = [get_bivariate_choropleth_color(p1, p2) for p1, p2 in
-                              zip(df[col1].values, df[col2].values)]
-    print(df['color_bivariate'])
+                             zip(df[col1].values, df[col2].values)]
     df.plot(ax=ax, color=df['color_bivariate'], alpha=alpha, legend=False)
     ax.set_xticks([])
     ax.set_yticks([])
@@ -101,17 +100,15 @@ def create_bivariate_plot_matplotlib_final(fig, df, col1, col2, file_name, x_axi
     scatter_ax.set_yticks([])
 
     # Plot the scatter on the separate layer
-    print(df[col1].values, df[col2].values)
     scatter_ax.scatter(df[col1].values, df[col2].values, color='#d85047', marker='x', s=10, alpha=0.9)
 
     # Make sure scatter_ax does not interfere with the original axis
     scatter_ax.set_facecolor((1, 1, 1, 0))  # Transparent background
 
 
-
 def create_bivariate_plot_matplotlib(df, col1, col2, file_name, x_axis_name, y_axis_name, title):
     ### percentile bounds defining upper boundaries of color classes
-    percentile_bounds = [i*20+ 0.01 for i in range(1, 6)]
+    percentile_bounds = [i * 20 + 0.01 for i in range(1, 6)]
 
     ### function to convert hex color to rgb to Color object (generativepy package)
     def hex_to_Color(hexcode):
@@ -165,7 +162,7 @@ def create_bivariate_plot_matplotlib(df, col1, col2, file_name, x_axis_name, y_a
     plt.title(title)
 
     df['color_bivariate'] = [get_bivariate_choropleth_color(p1, p2) for p1, p2 in
-                              zip(df[col1].values, df[col2].values)]
+                             zip(df[col1].values, df[col2].values)]
     print(df['color_bivariate'])
     df.plot(ax=ax, color=df['color_bivariate'], alpha=alpha, legend=False)
     ax.set_xticks([])
@@ -249,31 +246,32 @@ def create_bivariate_plot_plotly(gdf, col_1, col_2):
     # Show the map with the legend
     fig.show()
 
-def biplot(pc_df, loadings, labels=None):
+
+def biplot(pc_df, loadings, year, labels=None):
     fig, ax = plt.subplots(figsize=(10, 8))
 
     # Plot the scores for localities
-    ax.scatter(pc_df['PC1'], pc_df['PC2'], alpha=0.5, c='grey', label='Localities')
+    ax.scatter(pc_df['PC0'], pc_df['PC1'], alpha=0.5, c='grey', label='Localities')
 
     # If you want to label the localities:
     if labels is not None:
         for i, txt in enumerate(labels):
-            ax.annotate(txt, (pc_df['PC1'][i], pc_df['PC2'][i]), fontsize=9, alpha=0.7)
+            ax.annotate(txt, (pc_df['PC0'][i], pc_df['PC1'][i]), fontsize=9, alpha=0.7)
 
     # Plot the loadings (original variable vectors)
     print(loadings)
     for i in range(loadings.shape[0]):
-        ax.arrow(0, 0, loadings['PC1'][i], loadings['PC2'][i],
+        ax.arrow(0, 0, loadings['PC0'][i], loadings['PC1'][i],
                  color='red', alpha=0.8, head_width=0.03)
-        plt.text(loadings['PC1'][i] * 1.15, loadings['PC2'][i] * 1.15,
+        plt.text(loadings['PC0'][i] * 1.15, loadings['PC1'][i] * 1.15,
                  loadings.index[i], color='red', ha='center', va='center', fontsize=10)
 
     # Formatting
-    ax.set_xlabel('Principal Component 1')
-    ax.set_ylabel('Principal Component 2')
+    ax.set_xlabel('Principal Component 0')
+    ax.set_ylabel('Principal Component 1')
     ax.axhline(y=0, color='grey', linestyle='--', linewidth=0.7)
     ax.axvline(x=0, color='grey', linestyle='--', linewidth=0.7)
     plt.title('Biplot of PCA')
     plt.grid()
-    plt.show()
-
+    saving_dir = f"{os.path.dirname(__file__)}../../../Figures/Lucas/"
+    plt.savefig(f"{saving_dir}biplot{year}.jpg", bbox_inches='tight')
