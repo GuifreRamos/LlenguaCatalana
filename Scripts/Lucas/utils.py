@@ -33,10 +33,8 @@ def do_PCA(df, num_dims):
 def rescale_principal_components(df, cols):
     for col in cols:
         df[col] = df[col] - df[col].min()
-        print(df[col])
         max_val = df[col].max()
         df[f"{col}_prct"] = 100 * df[col] / max_val
-        print(df[f"{col}_prct"])
     return df
 
 

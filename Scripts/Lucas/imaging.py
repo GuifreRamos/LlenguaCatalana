@@ -8,7 +8,7 @@ from PIL import ImageColor
 import os
 
 
-def create_bivariate_plot_matplotlib_final(fig, df, col1, col2, file_name, x_axis_name, y_axis_name, title):
+def create_bivariate_plot_matplotlib_final(fig, df, col1, col2, x_axis_name, y_axis_name, title):
     ### percentile bounds defining upper boundaries of color classes
     percentile_bounds = [i * 20 + 0.01 for i in range(1, 6)]
 
