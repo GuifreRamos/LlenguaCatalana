@@ -65,15 +65,20 @@ def create_bivariate_plot_matplotlib_final(fig, df, col1, col2, x_axis_name, y_a
     df['color_bivariate'] = [get_bivariate_choropleth_color(p1, p2) for p1, p2 in
                              zip(df[col1].values, df[col2].values)]
     df.plot(ax=ax, color=df['color_bivariate'], alpha=alpha, legend=False)
+
     ax.set_xticks([])
     ax.set_yticks([])
 
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
     ### now create inset legend
-    ax = ax.inset_axes([0.6, 0.1, 0.2, 0.2])
+    ax = ax.inset_axes([0.7, 0.08, 0.25, 0.25])
     ax.set_aspect('equal', adjustable='box')
     count = 0
-    xticks = [0]
-    yticks = [0]
+    xponent = f"-{num_grps}"
+    xticks = ["$10^{" + xponent + "}$"]
+    yticks = ["$10^{" + xponent + "}$"]
     for i, percentile_bound_p1 in enumerate(percentile_bounds):
         for j, percentile_bound_p2 in enumerate(percentile_bounds):
             percentileboxes = [Rectangle((i, j), 1, 1)]
@@ -81,15 +86,21 @@ def create_bivariate_plot_matplotlib_final(fig, df, col1, col2, x_axis_name, y_a
             count += 1
             ax.add_collection(pc)
             if i == 0:
-                yticks.append(percentile_bound_p2)
-        xticks.append(percentile_bound_p1)
+                xponent = f"-{num_grps - j - 1}"
+                yticks.append("$10^{" + xponent + "}$")
+        xponent = f"-{num_grps - i - 1}"
+        xticks.append("$10^{" + xponent + "}$")
 
     _ = ax.set_xlim([0, len(percentile_bounds)])
     _ = ax.set_ylim([0, len(percentile_bounds)])
     _ = ax.set_xlabel(x_axis_name)
     _ = ax.set_ylabel(y_axis_name)
-    _ = ax.set_xticks([])
-    _ = ax.set_yticks([])
+    _ = ax.set_xticks([i for i in range(len(percentile_bounds) + 1)])
+    _ = ax.set_yticks([i for i in range(len(percentile_bounds) + 1)])
+    _ = ax.set_xticklabels(xticks)
+    _ = ax.set_yticklabels(yticks)
+    _ = ax.tick_params(axis='both', which='major', labelsize=6)
+
 
     # Add scatter points to the inset legend
     # Add scatter on a separate axis that is perfectly aligned

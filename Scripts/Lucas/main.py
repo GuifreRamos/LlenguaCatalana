@@ -55,8 +55,8 @@ def make_popvtalk_plot(year, final=False, fig=None):
                                          title=f"Population vs Talking Ability {year}")
     else:
         create_bivariate_plot_matplotlib_final(fig, df, f"pop_{year}_prct", "talksnot_prct",
-                                               x_axis_name="Population", y_axis_name="Cannot Talk",
-                                               title=f"Population vs Talking Ability {year}")
+                                               x_axis_name="Population", y_axis_name="Inability to Talk",
+                                               title=f"{year}")
 
 
 make_popvtalk_plot(2011)
@@ -286,6 +286,11 @@ def final_piece():
     # Add the four Plots
     make_popvtalk_plot(2001, final=True, fig=fig1)
     make_popvtalk_plot(2011, final=True, fig=fig2)
+
+    # Add a title to the entire figure
+    fig.suptitle("Population compared with Inability to Talk Catalan (Normalized Logarithmic Scale)",
+                 fontsize=15, y=0.78)
+    fig.tight_layout()
 
     # Save the Plot
     saving_dir = f"{os.path.dirname(__file__)}/../../Figures/Lucas/"
