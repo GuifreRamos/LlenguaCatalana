@@ -60,9 +60,9 @@ def rescale_percentages(df, cols):
     """This method will take a column and rescale the
     values to percentages in a logarithmic way."""
     for col in cols:
-        min_val = np.log(df[col].min())
-        max_val = np.log(df[col].max())
-        df[f"{col}_prct"] = 100 * (np.log(df[col]) - min_val) / (
+        min_val = np.log10(df[col].min())
+        max_val = np.log10(df[col].max())
+        df[f"{col}_prct"] = 100 * (np.log10(df[col]) - min_val) / (
                 max_val - min_val)
     return df
 
